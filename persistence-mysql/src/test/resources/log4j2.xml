@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<Configuration monitorInterval="10">  
+     
+  <Appenders>  
+  	<!-- 定义控制台输出 --> 
+	<Console name="Console" target="SYSTEM_OUT" follow="true">  
+		<PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%p] [%t] %c.%M(%L) | %m%n" />
+    </Console>
+     
+     <!-- 定义后台文档日志记录 -->
+    <RollingFile name="RollingFile" fileName="logs/log4j2.log" filePattern="logs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.log.gz">  
+		<PatternLayout>  
+        	<Pattern>%d{yyyy-MM-dd HH:mm:ss} [%p] [%t] %c.%M(%L) | %m%n</Pattern>  
+      	</PatternLayout>  
+        <Policies>
+        	<!-- 定义log文件封存的周期 -->  
+        	<TimeBasedTriggeringPolicy interval="1" modulate="true" />  
+        	<SizeBasedTriggeringPolicy size="100 MB"/>  
+        </Policies>  
+        <DefaultRolloverStrategy fileIndex="max" max="2"/>  
+    </RollingFile>  
+  </Appenders>  
+  <Loggers>
+  	<!-- 定义单个类日志记录级别 -->  
+	<Logger name="cn.gmw.skype.demo.log4j2.Log4j2ThreadA" level="trace">  
+		<AppenderRef ref="RollingFile"/>  
+    </Logger>
+    
+    <!-- 定义除单个类外所有日志记录级别 -->  
+    <Root level="debug">
+    	<AppenderRef ref="Console"/>
+    </Root>  
+  </Loggers>  
+  
+</Configuration>

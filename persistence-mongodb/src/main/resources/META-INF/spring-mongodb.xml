@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/data/mongo http://www.springframework.org/schema/data/mongo/spring-mongo-1.4.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+	
+	<!-- <mongo:mongo id="mongo" /> -->
+	<mongo:mongo id="mongo" host="${mongo.host}" port="${mongo.port}">
+		<mongo:options
+                connections-per-host="${mongo.connectionsPerHost}"
+                threads-allowed-to-block-for-connection-multiplier="${mongo.threadsAllowedToBlockForConnectionMultiplier}"
+                connect-timeout="${mongo.connectTimeout}"
+                max-wait-time="${mongo.maxWaitTime}"
+                auto-connect-retry="${mongo.autoConnectRetry}"
+                socket-keep-alive="${mongo.socketKeepAlive}"
+                socket-timeout="${mongo.socketTimeout}"
+                slave-ok="${mongo.slaveOk}"
+                write-number="-1"
+                write-timeout="0"
+                write-fsync="false"/> 
+	</mongo:mongo>
+	
+	<bean id="credential" class="org.springframework.data.authentication.UserCredentials">
+		<constructor-arg name="username" value="${mongo.username}"/>
+		<constructor-arg name="password" value="${mongo.password}"/>
+	</bean>
+	
+	<bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
+		<constructor-arg ref="mongo" />
+		<constructor-arg value="${mongo.database}"/>
+		<constructor-arg ref="credential"/>
+	</bean>
+	
+	<!-- autoscan spring data mongodb repository -->
+	<mongo:repositories base-package="com.github.lxgang.persistence.mongodb.repositories" />
+</beans>
