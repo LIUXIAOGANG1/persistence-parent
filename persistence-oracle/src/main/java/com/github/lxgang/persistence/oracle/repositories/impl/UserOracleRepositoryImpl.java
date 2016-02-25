@@ -75,6 +75,7 @@ public class UserOracleRepositoryImpl implements UserOracleRepository {
 //			where += " AND ACTIONTIME < to_date('" + user.getActionTimeEnd() + "', 'yyyy-mm-dd HH24:mi:ss')";
 //		}
 		
+		sqlInner = sqlInner.concat(where);
 //		String sqlEnd = " ORDER BY CREATETIME DESC ";
 		
 		return oraclePaginationHelper.fetchPage(oracleJdbcTemplate, sqlCountRows.concat(where), sqlPrefix, sqlInner, sqlSuffix, null, pageable, new BeanPropertyRowMapper<User>(User.class));
