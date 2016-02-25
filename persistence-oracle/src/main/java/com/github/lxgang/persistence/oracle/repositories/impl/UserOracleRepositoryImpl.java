@@ -44,12 +44,15 @@ public class UserOracleRepositoryImpl implements UserOracleRepository {
 	
 	@Override
 	public Page<User> findAllByPage(Pageable pageable, User user) {
-		String sqlFetchRows = "SELECT * FROM (SELECT A.*,ROWNUM RN FROM (SELECT * FROM SFB_ORDER) A WHERE ROWNUM <= 100) WHERE 1=1 ";
-		String sqlCountRows = "SELECT COUNT(*) FROM SFB_ORDER WHERE 1=1 ";
+		String sqlCountRows = "SELECT COUNT(*) FROM USER WHERE 1=1 ";
+		
+		String sqlPrefix = "SELECT * FROM (SELECT A.*,ROWNUM RN FROM (";
+		String sqlInner = "SELECT * FROM USER WHERE 1=1 ";
+		String sqlSuffix = ") A ) WHERE 1=1 ";
 		
 		String where = "";
 		if(user == null){
-			return oraclePaginationHelper.fetchPage(oracleJdbcTemplate, sqlCountRows, sqlFetchRows, null, pageable, new BeanPropertyRowMapper<User>(User.class));
+			return oraclePaginationHelper.fetchPage(oracleJdbcTemplate, sqlCountRows, sqlPrefix, sqlInner, sqlSuffix, null, pageable, new BeanPropertyRowMapper<User>(User.class));
 		}
 		
 		if(user.getId() != null){
@@ -65,15 +68,15 @@ public class UserOracleRepositoryImpl implements UserOracleRepository {
 			where += " AND AGE = " + user.getAge();
 		}
 		
-//		if(StringUtils.isNotBlank(queryVo.getActionTimeStart())){
-//			where += " AND ACTIONTIME > to_date('" + queryVo.getActionTimeStart() + "', 'yyyy-mm-dd HH24:mi:ss')";
+//		if(StringUtils.isNotBlank(user.getActionTimeStart())){
+//			where += " AND ACTIONTIME > to_date('" + user.getActionTimeStart() + "', 'yyyy-mm-dd HH24:mi:ss')";
 //		}
-//		if(StringUtils.isNotBlank(queryVo.getActionTimeEnd())){
-//			where += " AND ACTIONTIME < to_date('" + queryVo.getActionTimeEnd() + "', 'yyyy-mm-dd HH24:mi:ss')";
+//		if(StringUtils.isNotBlank(user.getActionTimeEnd())){
+//			where += " AND ACTIONTIME < to_date('" + user.getActionTimeEnd() + "', 'yyyy-mm-dd HH24:mi:ss')";
 //		}
 		
 //		String sqlEnd = " ORDER BY CREATETIME DESC ";
 		
-		return oraclePaginationHelper.fetchPage(oracleJdbcTemplate, sqlCountRows.concat(where), sqlFetchRows, null, pageable, new BeanPropertyRowMapper<User>(User.class));
+		return oraclePaginationHelper.fetchPage(oracleJdbcTemplate, sqlCountRows.concat(where), sqlPrefix, sqlInner, sqlSuffix, null, pageable, new BeanPropertyRowMapper<User>(User.class));
 	}
 }
