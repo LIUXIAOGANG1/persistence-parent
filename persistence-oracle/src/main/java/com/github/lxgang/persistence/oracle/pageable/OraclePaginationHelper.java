@@ -38,9 +38,10 @@ public class OraclePaginationHelper<T> implements PaginationHelper<T> {
 			String sqlSuffix, Pageable pageable){
 		if(pageable == null) return sqlPrefix.concat(sqlInner).concat(sqlSuffix);
 		
+		int number = pageable.getPageNumber();
 		int offset = pageable.getOffset();
 		int pageSize = pageable.getPageSize();
-		sqlSuffix += String.format(" AND RN>= %d AND RN<= %d", offset, pageSize);
+		sqlSuffix += String.format(" AND RN> %d AND RN<= %d", offset, (number + 1)*pageSize);
 		
 		Sort sort = pageable.getSort();
 		// 使用排序
